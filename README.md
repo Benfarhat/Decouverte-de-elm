@@ -1,4 +1,4 @@
-Programmer en ELM
+**Developper une application monopage (SPA) avec Elm**
 
 # Présentation de ELM
 
@@ -40,6 +40,8 @@ Une seule remarque: null n'existe pas! elle est remplacer par le mot clé Maybe.
 Sur le site d'[elm](http://elm-lang.org) vous avez la possibilité de faire quelques tests en vous basant éventuellement sur les nombreux [exemples](http://elm-lang.org/examples) fournis. 
 
 Vous pouvez également tester quelques commandes en local avec le REPL via la commande elm-repl vous devez indiquer un passage à la ligne en finissant votre ligne avec une barre oblique inversé \ (anti-slash en anglais).
+
+Un Résumé (cheat sheet) est disponible [ici](https://github.com/izdi/elm-cheat-sheet), voici quelques commandes très basique elm en utilisant `elm-repl` et dont les commandes sont disponible [ici](https://guide.elm-lang.org/core_language.html).
 
 ```
 PS D:\labs\elm> npx elm-repl
@@ -102,3 +104,94 @@ False : Bool
 >
 ```
 
+## Première application elm
+
+Nous allons créer notre premier application et utiliser `elm-package` pou intaller le module html
+
+```
+PS D:\labs\elm> npx elm-package install elm-lang/html
+npx: installed 1 in 2.468s
+Path must be a string. Received undefined
+D:\labs\elm\node_modules\elm\binwrappers\elm-package
+Some new packages are needed. Here is the upgrade plan.
+
+  Install:
+    elm-lang/core 5.1.1
+    elm-lang/html 2.0.0
+    elm-lang/virtual-dom 2.0.4
+
+Do you approve of this plan? [Y/n] Y
+Starting downloads...
+
+  ÔùÅ elm-lang/virtual-dom 2.0.4
+  ÔùÅ elm-lang/html 2.0.0
+
+ÔùÅPackages configured successfully!
+ elm-lang/core 5.1.1
+PS D:\labs\elm>
+```
+Si vous tracker vos modifications avec git alors dans votre fichier `.gitignore` mettez ces deux lignes:
+
+```
+node_modules
+elm-stuff
+```
+Ensuite créeons un fichier avec l'extension elm appelons le Application.elm dans lequel vous mettrez le code suivant:
+
+```
+module Application exposing (..)
+
+import Html exposing (text)
+
+
+main =
+    text "Mon application"
+```
+
+Tout d'abord dans elm nous avons de préférence du code simple dans un fichier qui va contenir ce qu'on appelle module (ou une partie de l'application), dans la première ligne vous devait lire "ce module Application expose tout" (.. représente tout)
+Ensuite on appelle la fonction text du module html pour dans notre main afficher le texte "Mon application"
+
+Pour exécuter ceci nous allons lancer la commande: 
+
+```
+PS D:\labs\elm> npx elm-reactor
+npx: installed 1 in 2.525s
+Path must be a string. Received undefined
+D:\labs\elm\node_modules\elm\binwrappers\elm-reactor
+elm-reactor 0.18.0
+Listening on http://localhost:8000
+```
+
+Puis comme il est indiqué on se rend via notre navigateur sur l'adresse http://localhost:8000 pour voir la liste des fichier de ce répertoire, il suffit de cliquer sur le fichier Application.elm ou se rendre à l'adresse http://localhost:8000/Application.elm, pour qu'après transformation votre page web affiche le texte "Mon application" avec le code source suivant:
+
+```
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>~/Application.elm</title>
+<style type="text/css">@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro);
+html, head, body {
+  margin: 0;
+  height: 100%;
+}
+</style>
+</head>
+<body>
+<div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #9A9A9A; font-family: &#39;Source Sans Pro&#39;;">
+<div style="font-size: 3em;">Building your project!</div>
+<img src="/_reactor/waiting.gif">
+<div style="font-size: 1em">With new projects, I need a bunch of extra time to download packages.
+</div>
+</div>
+</body>
+<script src="/_compile/Application.elm" charset="utf-8">
+</script>
+<script>while (document.body.firstChild) {
+    document.body.removeChild(document.body.firstChild);
+}
+runElmProgram();
+</script>
+</html>
+```
+A présent modifions un peu notre application
