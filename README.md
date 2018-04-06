@@ -112,6 +112,169 @@ Avant de finir, pour tester vos codes en ligne, le site [ellie](https://ellie-ap
 
 ### Quelques bases
 
+#### Les noms
+
+Les noms ne peuvent être que comme suit:
+
+- variables en minucules
+- fonctions en minuscules
+- modules et types 
+
+#### L'opérateur arithmétique de l'addition
+le REPL peut être utilisé comme une calculatrice comme nous l'avons fait précédemment, la différence avec javascript par exemple, c'est que ELM utilise un typage statique, en gros quand c'est du texte, c'est du texte, et si c'est un nombre, ca restera un nombre, au niveau de javascript il est possible de faire `1 + 1` ou `true + 1` ou encore `"1" + 1`, c'est javascript qui décidera de comment utiliser le signe "+" et donc du resultat et de son type (ici cela fera 2, 2 et "11"). Avec ELM, il n'y a pas d'ambiguité, un plus (+) restera pour l'addition et non la concatenation de chaine de caractère, pour la concaténation on utilisera plûtot + plus (++), le signe ++ s'applique aux "strings", "text" et "lists".
+
+```
+> 1 + 2
+3 : number
+> True + 1
+-- TYPE MISMATCH --------------------------------------------- repl-temp-000.elm
+
+The left argument of (+) is causing a type mismatch.
+
+3|   True + 1
+     ^^^^
+(+) is expecting the left argument to be a:
+
+    number
+
+But the left argument is:
+
+    Bool
+
+
+>
+```
+
+Notez que le compilateur utilise ce qu'on appelle l'inférence de type (type inference) pour dans son message vous dire quel type de valeur doit être fournie à droite de l'opérateur ou à gauche
+
+### Les appendables
+
+Voyons le resultat du double signe plus sur quelques valeurs, nous rappelons qu'Elm est fortement typé, seul les opérandes de types strings, text ou lists peuvent être utilisées.
+
+```
+> 1 ++ 1
+==================================== ERRORS ====================================
+
+-- TYPE MISMATCH --------------------------------------------- repl-temp-000.elm
+
+The left argument of (++) is causing a type mismatch.
+
+4|   1 ++ 1
+     ^
+(++) is expecting the left argument to be a:
+
+    appendable
+
+But the left argument is:
+
+    number
+
+Hint: Only strings, text, and lists are appendable.
+
+
+> True ++ False
+==================================== ERRORS ====================================
+
+-- TYPE MISMATCH --------------------------------------------- repl-temp-000.elm
+
+The left argument of (++) is causing a type mismatch.
+
+4|   True ++ False
+     ^^^^
+(++) is expecting the left argument to be a:
+
+    appendable
+
+But the left argument is:
+
+    Bool
+
+Hint: Only strings, text, and lists are appendable.
+
+
+> "Salut " ++ "tout " ++ "le " ++ "Monde"
+"Salut tout le Monde" : String
+```
+
+
+#### Les Strings
+
+Comme nous venons de le voir la concaténation de chaine de caractère se fait via les double signe plus (++), d'autres fonctions interessantes sont disponibles comme:
+
+  , isEmpty, length, reverse, repeat, replace, append, concat, split, join, words, lines, slice, left, right, dropLeft, dropRight, contains, startsWith, endsWith, indexes, indices, toInt, fromInt, toFloat, fromFloat, fromChar, cons, uncons, toList, fromList, toUpper, toLower, pad, padLeft, padRight, trim, trimLeft, trimRight, map, filter, foldl, foldr, any, all
+
+  Faisons quelques tests:
+
+```
+> mot = "Tunisie"
+"Tunisie" : String
+> String.toUpper mot
+"TUNISIE" : String
+> String.reverse mot
+"eisinuT" : String
+> String.startsWith "T" mot
+True : Bool
+> String.startsWith "t" mot
+False : Bool
+> String.contains "z" mot
+False : Bool
+> String.indices "i" mot
+[3,5] : List Int
+> String.toList mot
+['T','u','n','i','s','i','e'] : List Char
+>
+```
+
+
+#### Les caractères
+
+Lorsque nous avons utilisés la fonction toList, on voit qu'on obtient une liste de caractères qui se différencient des string par l'utilisation d'une simple quote (et non les doubles)
+
+```
+> "t"
+"t" : String
+> 't'
+'t' : Char
+```
+
+Les fonctions disponibles sont les suivantes:
+isUpper, isLower, isDigit, isOctDigit, isHexDigit, toUpper, toLower, toLocaleUpper, toLocaleLower, KeyCode, toCode, fromCode
+
+```
+> import Char
+> Char.toCode 'A'
+65 : Char.KeyCode
+> Char.fromCode 55
+'7' : Char
+> Char.fromCode 65
+'A' : Char
+> Char.fromCode 66
+'B' : Char
+> Char.isUpper 'A'
+True : Bool
+> Char.isUpper 'a'
+False : Bool
+>
+```
+
+
+#### Les opérateurs de la division
+
+Il y a deux signes de division
+- / qui rend le résultat de la division exacte
+- // qui rend la partie entière (le quotient) de la division euclidienne
+- % qui rend le reste de la division euclidienne
+
+```
+> 7/3
+2.3333333333333335 : Float
+> 7//3
+2 : Int
+> 7%3
+1 : Int
+```
+
+
 #### L'affectation et Records
 
 L'affectation se fait avec le signe égal (=). Pour noter (et non affecter) les valeurs à l'intérieur des records (l'équivalent des objets en javascript) on utilise les deux points.
@@ -200,7 +363,7 @@ To really learn what is going on and how to fix it, check out:
 >
 ```
 
-Les records sont immutables donc pas question de modifier son contenu directement, il faut créer un nouveau record avec les modifications necessaires via le pipe "|":
+Les records sont immutables donc pas question de modifier son contenu directement, il faut créer un nouveau record avec les modifications necessaires via le type union "|":
 
 ```
 > rec = { val1 = 1, val2 = 2 }
@@ -262,7 +425,7 @@ champInexistant.
 >
 ```
 
-L'ajout et la suppression de champ ont été implémenté dans la version 0.6 du compilateur elm puis jugé inutile puisque le type "union" permet de le faire
+L'ajout et la suppression de champ ont été supprimé dans la version 0.16 (ou 0.6 du compilateur) d'elm puisque le type "union" permet de le faire (le fameux pipe)
 
 #### Les listes
 
@@ -280,42 +443,110 @@ Pour ajouter un élement il faut utiliser la fonction `List.append` ou simplemen
 ["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"] : List String
 ```
 
-#### L'opérateur arithmétique de l'addition
-le REPL peut être utilisé comme une calculatrice comme nous l'avons fait précédemment, la différence avec javascript par exemple, c'est que ELM utilise un typage statique, en gros quand c'est du texte, c'est du texte, et si c'est un nombre, ca restera un nombre, au niveau de javascript il est possible de faire `1 + 1` ou `true + 1` ou encore `"1" + 1`, c'est javascript qui décidera de comment utiliser le signe "+" et donc du resultat et de son type (ici cela fera 2, 2 et "11"). Avec ELM, il n'y a pas d'ambiguité, un plus (+) restera pour l'addition et non la concatenation de chaine de caractère, pour la concaténation on utilisera plûtot + plus (++), le signe ++ s'applique aux "strings", "text" et "lists".
+#### Map Filter et Foldl / foldr
+
+Ces 3 fonctions sont les équivalentes javascript de map filter et reduce
+- map permet en boucle de faire une opération sur chaque élement d'une iste
+- filter permet de retourner ou pas un élement d'une liste si la fonction qui lui est appliquée retourne True
+- reduce/foldl permet de faire des opérations sur l'ensemble des élements
+
+La différence entre foldl et foldr est le sens par lequel nous commencons, foldl à partir de la gauche (left) et foldr à partir de la droite (right)
+
+Si vous avez simplement besoin de faire une somme ou un produit les fonctions sum et product exist déjà
+Toutes les fonctions disponibles pour les listes sont les suivantes:
+
+isEmpty, length, reverse, member, head, tail, filter, take, drop, singleton, repeat, range, (::), append, concat, intersperse, partition, unzip, map, map2, map3, map4, map5, filterMap, concatMap, indexedMap, foldr, foldl, sum, product, maximum, minimum, all, any, scanl, sort, sortBy, sortWith
+
+Voici un exemple d'utiliser de certaines des fonctions ci dessus citées:
+
 
 ```
-> 1 + 2
-3 : number
-> True + 1
--- TYPE MISMATCH --------------------------------------------- repl-temp-000.elm
-
-The left argument of (+) is causing a type mismatch.
-
-3|   True + 1
-     ^^^^
-(+) is expecting the left argument to be a:
-
-    number
-
-But the left argument is:
-
-    Bool
-
-
+> maList = [1,3,4,0,5,7,1,6,8,13,9]
+[1,3,4,0,5,7,1,6,8,13,9] : List number
+> List.map (\n -> n * n) maList
+[1,9,16,0,25,49,1,36,64,169,81] : List number
+> List.filter(\n -> n % 2 == 0 ) maList
+[4,0,6,8] : List Int
+> List.foldl (+) 0  maList
+57 : number
+> List.sum maList
+57 : number
+> List.maximum maList
+Just 13 : Maybe.Maybe number
+> List.minimum maList
+Just 0 : Maybe.Maybe number
+> List.sort maList
+[0,1,1,3,4,5,6,7,8,9,13] : List number
 >
 ```
 
-Notez que le compilateur utilise ce qu'on appelle l'inférence de type (type inference) pour dans son message vous dire quel type de valeur doit être fournie à droite de l'opérateur ou à gauche
+#### Les Tuples
 
-### Les appendables
+Les records s'ecrivent entre des accolades {}, les listes entre des crochets [] et les tuples entre des parenthèses ()
+Les tuples sont une sorte de record sans nom de valeur, en faite il est recommandé d'utiliser les records des qu'un tuple dépasse les 2 valeurs, d'ailleurs les seules fonctions disponibles sont:
 
-Voyons le resultat du double signe sur quelques valeurs, nous rappelons qu'Elm est fortement typé, seul les opérandes de types strings, text ou lists peuvent être utilisées.
+first, second, mapFirst, mapSecond
 
-#### Les opérateurs de la division
+```
+> tuple1 = ("mot", 2)
+("mot",2) : ( String, number )
+> Tuple.first tuple1
+"mot" : String
+> Tuple.second tuple1
+2 : number
+> Tuple.mapFirst (\n -> "La premiere valeur est: " ++ n) tuple1("La premiere valeur est: mot",2) : ( String, number )
+> Tuple.mapFirst String.reverse tuple1
+("tom",2) : ( String, number )
+> Tuple.mapSecond (\n -> n * n) tuple1
+("mot",4) : ( String, number )
+>
+```
 
-Il y a deux signes de division
-- / qui rend le résultat de la division exacte
-- // qui rend la partie entière (le quotient) de la division euclidienne
+#### Les commentaires
+
+Les commantaires sont des textes qui seront ignorés par le compilateur, ils sont utilisés pour décrire le code ou la méthodologie utilisée
+
+Il existe des commantaire sur une seule ligne et des commantaires de block sur plusieurs lignes
+
+```
+> 1 + 1 -- Ceci est un commantaire sur une seule ligne
+2 : number
+> 1 + 1 {- Ceci est un commentaire \
+| sur plusieurs \
+| lignes -}
+2 : number
+>
+```
+
+#### Les fonctions
+
+Les fonctions doivent être le plus simple et court possible
+si des élements appartiennet à la fonctions (puisqu'il n'y a pas de caractère délimiteur de block comme en javascript) on utilise l'indentation
+
+```
+> function1 a = a + 1
+<function> : number -> number
+> function1 3
+4 : number
+> function2 b \
+| = b + 1
+-- SYNTAX PROBLEM -------------------------------------------- repl-temp-000.elm
+
+The = operator is reserved for defining variables. Maybe you want == instead? Or
+maybe you are defining a variable, but there is whitespace before it?
+
+7|   = b + 1
+     ^
+Maybe <http://elm-lang.org/docs/syntax> can help you figure it out.
+
+
+> function2 b \
+|   = b + 1
+<function> : number -> number
+> function2 3
+4 : number
+>
+```
 
 
 ## Première application elm
