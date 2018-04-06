@@ -116,7 +116,7 @@ Avant de finir, pour tester vos codes en ligne, le site [ellie](https://ellie-ap
 
 Les noms ne peuvent être que comme suit:
 
-- variables en minucules
+- variables / constantes en minucules (camelCase par exemple maPremiereConstante ou en camal_case)
 - fonctions en minuscules
 - modules et types 
 
@@ -146,6 +146,60 @@ But the left argument is:
 ```
 
 Notez que le compilateur utilise ce qu'on appelle l'inférence de type (type inference) pour dans son message vous dire quel type de valeur doit être fournie à droite de l'opérateur ou à gauche
+
+### Prefixe style et infixe stle
+
+Dans toutes les opérations vous pouvez théoriquement prendre pour équivalent l'utilisation de l'opérateur entre les opérandes ou en début de ligne
+
+`a OPERATEUR b` équivaut à `(OPERATEUR) a b`
+
+En debut de ligne on parle de préfixe et dans la ligne on parle de infixe
+
+Dans le cas de l'infixe on a cette  équivalence
+
+`(OPERATEUR) a b` équivaut à `a |> OPERATEUR b`
+
+```
+> 1 + 2
+3 : number
+> (+) 1 2
+3 : number
+> 2 * 3
+6 : number
+> (*) 2 3
+6 : number
+> 4 - 5
+-1 : number
+> (-) 4 5
+-1 : number
+> "texte1" ++ "texte2"
+"texte1texte2" : String
+> (++) "texte1" "texte2"
+"texte1texte2" : String
+> ajout a b = a + b
+<function> : number -> number -> number
+> ajout 2 3
+5 : number
+> 2 |> ajout 3
+5 : number
+```
+
+##### Pipe ou chainage des fonctions
+
+Il est possible d'enchainer l'exécution de fonctions comme suit:
+
+```
+import Html exposing (text)
+import String
+
+transformTexte string =
+  string
+    |> String.reverse
+    |> String.toUpper
+
+main =
+  text (transformTexte "fonctionnel")
+```
 
 ### Les appendables
 
@@ -256,7 +310,33 @@ True : Bool
 False : Bool
 >
 ```
+#### Le multiligne
+le multiligne peut être délimité par 3 doubles quotes consécutives.
 
+```
+import Html exposing (text)
+
+lorem = """
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+Suspendisse sagittis elementum mauris, sit amet faucibus lectus elementum id. 
+Nunc vehicula nulla sed tortor consectetur, in fermentum velit varius. 
+Maecenas nec tempus nisi. 
+Suspendisse cursus, sem sed molestie efficitur, 
+lectus dolor lobortis urna, eget imperdiet risus quam sed erat. 
+Sed feugiat sem est, ac sodales erat tincidunt et. 
+Phasellus quis augue non nisl viverra semper. 
+Sed eleifend tellus nec leo efficitur, eget pretium sem ornare. 
+Pellentesque et nisl sapien. Nunc consequat est tortor, 
+eu bibendum risus finibus nec. 
+Donec consectetur condimentum nibh sit amet aliquam. 
+Donec a cursus ipsum. Fusce non convallis mi, vel tempus nunc. 
+Interdum et malesuada fames ac ante ipsum primis in faucibus.
+"""
+
+main =
+  text (lorem)
+```
 
 #### Les opérateurs de la division
 
@@ -273,7 +353,6 @@ Il y a deux signes de division
 > 7%3
 1 : Int
 ```
-
 
 #### L'affectation et Records
 
@@ -305,6 +384,98 @@ Vous pouvez faire une liste de records  (voir [doc officielle](http://elm-lang.o
 [{ nom = "Gates", societe = "microsoft" },{ nom = "Jobs", societe = "apple" },{ nom = "Page", societe = "google" }] : List { nom : String, societe : String }
 >
 ```
+
+#### Annotation de Type
+
+Il est possible de prédéfinir le type attendu grace au deux points `:`, c'est de l'nnotation de types
+
+```
+import Html exposing (text)
+
+nom : String
+nom = "Elyes"
+
+main =
+  text ("Bonjour" ++ " " ++ nom)
+```
+
+Même chose avec les fonctions:
+
+```
+import Html exposing (text)
+
+increment : Int -> Int
+increment n =
+  n + 1
+
+
+isNear : Int -> Int -> Bool
+isNear x y =
+  abs (x - y) < 10
+
+main =
+  text (toString (isNear 132 (increment 129)))
+```
+
+#### Définition d'un Type
+
+Il est possible de définir un nouveau type comme suit
+
+```
+> sofiene = Homme
+-- NAMING ERROR ---------------------------------------------- repl-temp-000.elm
+
+Cannot find variable `Homme`
+
+9| sofiene = Homme
+             ^^^^^
+
+> type Genre = Homme | Femme
+> sofiene = Homme
+Homme : Repl.Genre
+>
+```
+
+#### Alias de type
+
+Il est possible de créer un alias pour "renommer" ou "nommer" d'autres types simples 
+Si par exemple vous avez des positions géographiques qui suivent ce schéma: { lat:Int, long:Int }, il est possible de créer un aliases de type comme suite:
+
+`type alias Location = { lat:Int, long:Int }`
+
+On pourrait donc améliorer la lisibilité du code en passant de cela:
+
+```
+parcours : { x:Int, y:Int } -> { x:Int, y:Int } -> { x:Int, y:Int }
+parcours a b =
+  { a.x + b.x, a.y + b.y }
+```
+
+à ca:
+
+```
+type alias Position = { x:Int, y:Int }
+parcours : Position -> Position -> Position
+parcours a b =
+  { a.x + b.x, a.y + b.y }`
+
+```
+
+Voici un code qui en cas d'erreur retournerais le message: "The definition of `moderateur` does not match its type annotation. Si jamais nous resneeignons au moderateur l'"emal" au lieu de l'"email".
+
+```
+import Html exposing (text)
+
+
+type alias Utilisateur = { username : String, password: String, email: String, niveau: Int }
+
+moderateur : Utilisateur
+moderateur = { username = "Elyes", password= "SuperSecretPassword", email= "elyes@example.com", niveau= 2}
+main =
+  text (moderateur.username ++ " a le niveau de " ++ toString(moderateur.niveau))
+```
+
+Notez qu'en théorie un alias est intéréssant lorsqu'il est utilisé au moins 2 fois, sinon la définition et l'utilisation prendrait plus de ligne de code, pour "rien"
 
 #### Accès aux élements d'un record
 
@@ -443,6 +614,12 @@ Pour ajouter un élement il faut utiliser la fonction `List.append` ou simplemen
 ["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"] : List String
 ```
 
+On peut donc faire :
+
+```
+1 :: 2 :: 3 :: 4 :: []
+```
+
 #### Map Filter et Foldl / foldr
 
 Ces 3 fonctions sont les équivalentes javascript de map filter et reduce
@@ -548,6 +725,95 @@ Maybe <http://elm-lang.org/docs/syntax> can help you figure it out.
 >
 ```
 
+#### Créer un scope locale
+
+Les constantes définis dans un scope local ne sont pas accesible à l'extérieur de ce scope, on utilse les mots clés `let` et `in`
+let défini les constantes locales et in défini la zone du scope. Ces deux zones sont identifiées ou délimités par leur niveau d'intentation
+
+```
+> b = "exterieur"
+"exterieur" : String
+> func1 a = let b = "interieur" in a ++ b
+<function> : String -> String
+> b
+"exterieur" : String
+> func1 "accees "
+"accees interieur" : String
+>
+```
+
+#### Curryfication
+
+Il est très simple de faire du currying comme suit:
+
+```
+> somme a b = a + b
+<function> : number -> number -> number
+> somme 2
+<function> : number -> number
+> sommeDeux = somme 2
+<function> : number -> number
+> sommeDeux 5
+7 : number
+> sommeDeux 10
+12 : number
+>
+```
+
+
+#### Condition if
+
+```
+> if True == True then "egaux" else "non egaux"
+"egaux" : String
+>
+```
+
+Il est possible d'avoir plusieurs if successif
+
+```
+> age = 17
+17 : number
+> if age > 22 then "plus de 22 ans" else if age > 20 then "entre 20 et 22 ans" else "moins de 2""moins de 22 ans" : String
+>
+```
+
+Attention! Même chose que pour les fonctions, si l'expression s'écrit par block (en multiligne) alors on utilise les indentations pour les délimiter
+
+#### Matching case
+
+Lorsque nous avons plusieurs if imbriqué il est possible d'utiliser l'expresson case. Elm n'aime pas les cases qui ne test pas toutes les possibilités pour évité d'avoir un cas non résolu. L'équivalent du `default` de javascript est `_`
+
+
+```
+import Html exposing (text)
+import String
+
+jours number =
+  case number of
+    1 -> "Lundi"
+    2 -> "Mardi"
+    3 -> "Mercredi"
+    4 -> "Jeudi"
+    5 -> "Vendredi"
+    6 -> "Samedi"
+    7 -> "Dimanche"
+    _ -> "Inconnu"
+
+main =
+  text (String.join ", " listeJours)
+
+
+listeJours =
+  [ jours 1
+  , jours 2
+  , jours 3
+  , jours 4
+  , jours 5
+  , jours 6
+  , jours 7
+  ]
+```
 
 ## Première application elm
 
