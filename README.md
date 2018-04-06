@@ -84,6 +84,8 @@ True : Bool
 PS D:\labs\elml>
 ```
 
+Pour quitter le REPL nous devons taper la commande :exit ou faire la combinaison de touche CTRL + d
+
 Observez également la qualité des messages d'erreur, il ne manque plus qu'il nous corrige lui même le code:
 
 ```
@@ -103,6 +105,9 @@ Maybe you want one of the following?
 False : Bool
 >
 ```
+
+Avant de finir, pour tester vos codes en ligne, le site [ellie](https://ellie-app.com/new) semble très bien fait et offre une interface plus complete que la partie try de elm.lang
+
 
 ## Première application elm
 
@@ -162,7 +167,9 @@ elm-reactor 0.18.0
 Listening on http://localhost:8000
 ```
 
-Puis comme il est indiqué on se rend via notre navigateur sur l'adresse http://localhost:8000 pour voir la liste des fichier de ce répertoire, il suffit de cliquer sur le fichier Application.elm ou se rendre à l'adresse http://localhost:8000/Application.elm, pour qu'après transformation votre page web affiche le texte "Mon application" avec le code source suivant:
+Puis comme il est indiqué on se rend via notre navigateur sur l'adresse http://localhost:8000 pour voir la liste des fichier de ce répertoire, A droite nous trouvons la version et un résumé du projet (package), pour les modifier il faut se rendre dans le fichier `elm-package.json` et changé les champs `version` et `summary`
+
+Dans la liste affiché, il suffit de cliquer sur le fichier Application.elm ou se rendre à l'adresse http://localhost:8000/Application.elm, pour qu'après transformation votre page web affiche le texte "Mon application" avec le code source suivant:
 
 ```
 <!DOCTYPE HTML>
@@ -236,3 +243,51 @@ Prenons la template starter de bootstrap que nous allons insérer dans le fichie
 </html>
 
 ```
+
+Modifions la balise h1 par une div dans laquelle nous positionnerons le code généré elm:
+
+```
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <div id="elm_root"></div>
+
+    <script src="elm.js"></script>
+    <script>
+      Elm.Main.embed(document.getElementById("elm_root"));
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
+```
+
+A présent il ne nous manque plus que le code elm.js, nous allons le créer grace à la commande `elm-make Application.elm --output elm.js` :
+
+```
+D:\labs\elm\node_modules\elm\binwrappers\elm-make
+Success! Compiled 1 module.
+Successfully generated elm.js
+PS D:\labs\elm\Application>
+```
+
+Trois commandes sont possible:
+
+- Elm.fullscreen(Elm.Application, {reset:[]});   // Affichage plein écran
+- Elm.embed(Elm.Application, div, {reset:[]});   // Affichage dans une div spécifique
+- Elm.worker(Elm.Application,     {reset:[]});   // Instantiation sans graphique
+
+la fonction appelé sans output créerais également le fichier index.html qui intégrera l'output d'elm: `elm-make Application.elm` et si jamais vous désirez avoir un autre nom de fichier il faut simplement faire : `elm-make Application.elm --output autreNomDeFichier.html`
