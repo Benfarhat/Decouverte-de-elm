@@ -1,5 +1,41 @@
 **Developper une application monopage (SPA) avec Elm**
 
+- [Présentation de ELM](#pr%C3%A9sentation-de-elm)
+  - [Installation d'elm](#installation-delm)
+  - [Premier pas avec elm](#premier-pas-avec-elm)
+    - [Quelques bases](#quelques-bases)
+      - [Les noms](#les-noms)
+      - [L'opérateur arithmétique de l'addition](#lop%C3%A9rateur-arithm%C3%A9tique-de-laddition)
+    - [Prefixe style et infixe stle](#prefixe-style-et-infixe-stle)
+        - [Pipe ou chainage des fonctions](#pipe-ou-chainage-des-fonctions)
+    - [Les appendables](#les-appendables)
+      - [Les Strings](#les-strings)
+      - [Les caractères](#les-caract%C3%A8res)
+      - [Le multiligne](#le-multiligne)
+      - [Les opérateurs de la division](#les-op%C3%A9rateurs-de-la-division)
+      - [L'affectation et Records](#laffectation-et-records)
+      - [Annotation de Type](#annotation-de-type)
+      - [Définition d'un Type](#d%C3%A9finition-dun-type)
+      - [Alias de type](#alias-de-type)
+      - [Accès aux élements d'un record](#acc%C3%A8s-aux-%C3%A9lements-dun-record)
+      - [Immutabilité](#immutabilit%C3%A9)
+      - [Les listes](#les-listes)
+      - [Map Filter et Foldl / foldr](#map-filter-et-foldl-foldr)
+      - [Les Tuples](#les-tuples)
+      - [Les commentaires](#les-commentaires)
+      - [Les fonctions](#les-fonctions)
+        - [Fonctions anonymes](#fonctions-anonymes)
+      - [Créer un scope locale](#cr%C3%A9er-un-scope-locale)
+      - [Fonctions pures](#fonctions-pures)
+      - [Interet des fonctions pures](#interet-des-fonctions-pures)
+      - [Curryfication](#curryfication)
+      - [Condition if](#condition-if)
+      - [Matching case](#matching-case)
+- [Création de l'application elm](#cr%C3%A9ation-de-lapplication-elm)
+  - [L'architecture d'Elm](#larchitecture-delm)
+  - [Première application elm - test](#premi%C3%A8re-application-elm---test)
+    - [Intégrer de l'elm dans une page html](#int%C3%A9grer-de-lelm-dans-une-page-html)
+
 # Présentation de ELM
 
 ELM est un langage récemment créer par Evan Czaplicki (qu'il présente lors de sa thèse, le 30 mars 2012) et qui suit le paradigme de la programmation fonctionnelle. La programmation fonctionnelle qui est un dérivé de la programmation déclarative dans laquelle on dit "quoi" et on laisse le programme faire le reste (en opposition à la programmation impérative ou on dit plutot "comment" en donnant un ensemble d'instruction à suivre impérativement pour résoudre un problème. Pour le cas de la programmation fonctionnelle, le comment se fera en se basant sur le principe des fonctions mathématiques qui se veulent être courte, simple, et ne font qu'une chose à la fois (single responsibility principle).
@@ -495,7 +531,6 @@ ou
 >
 ```
 
-
 #### Immutabilité
 
 L'immutabilité est un des concepts clé de la programmation fonctionnelle, cela conciste à ne pas permettre le changement d'état mais de créer une sorte de copie. Et donc d'éviter les effets de bords (et donc si un record est utilisé dans une fonction, il ne risque pas d'être modifié en cours de route). L'immutabilité permet d'accéleré 
@@ -724,6 +759,14 @@ Maybe <http://elm-lang.org/docs/syntax> can help you figure it out.
 4 : number
 >
 ```
+##### Fonctions anonymes
+
+Les fonctions anonymes utilise la barre lambda (a ne pas confondre avec la même barre de fin de ligne qui permet de dire au REPL que l'instruction n'est pas fini)
+
+```
+> List.map(\n -> n*n) [1,2,3,4,5,6,7,8,9]
+[1,4,9,16,25,36,49,64,81] : List number
+```
 
 #### Créer un scope locale
 
@@ -742,7 +785,25 @@ let défini les constantes locales et in défini la zone du scope. Ces deux zone
 >
 ```
 
+#### Fonctions pures
+
+L'un des concepts de la programmation fonctionnelle est l'utilisation de fonctions pures, ce sont des fonctions qui n'ont pas d'effet de bord et dont le résultat ne dépend que des arguments, comme le font les fonctions mathématiques.
+
+#### Interet des fonctions pures
+
+Les fonctions pures de par leur nature, peuvent facilement être testé, de plus lors de leur appel, vu qu'elles n'ont aucun effets de bord, elle ne risque pas de casser l'exécution d'autres fonctions, de plus les fonctions pures sont "parralélisable" et être exécuté dans un environnement multithread.
+
+Pour une même valeur d'entrée une fonction pure retournera la même valeur de sortie ce qui permet:
+- De mettre en cache le resultat des fonctions pures
+- De remplacer lors de la compilation une fonction pure par sa valeur de retour
+
+Lors de la compilation, il est égaleme
+
+Notez que malgré les avantages des fonctions pures, il est cependant impossible de rendre toutes les fonctions pures, par exemple les fonctions relatives aux dates et heures ou aux fonctions hasardeuse (random) res
+
 #### Curryfication
+
+La curryfication permet de rendre une fonction pure, l'opération inverse s'appelle la décurryfication. Le mot curry vient du nom du mathématicien Haskell Curry.
 
 Il est très simple de faire du currying comme suit:
 
@@ -815,7 +876,59 @@ listeJours =
   ]
 ```
 
-## Première application elm
+# Création de l'application elm
+
+## L'architecture d'Elm
+
+Elm a trois principaux composants
+
+* Model: Un modèle pour l'état de l'application
+* View: Une vue pour l'affchage de l'application en fonction de l'état
+* Update: l'update qui gère les modifications de l'etat de l'application en fonction des interaction avec l'utilisateur, d'une api ou d'un serveur
+
+```
+module Application exposing (..)
+
+import Html exposing (beginnerProgram, div, button, text)
+import Html.Events exposing (onClick)
+import Html.Attributes exposing (..)
+
+-- main est la fonction de point d'entrée
+main =
+  -- La fonction beginnerProgram permet d'appeler les 3 élements de l'architecture elm (model, view, update)
+  -- On initialise la valeur du model à 0
+  beginnerProgram { model = { valeur = 0 }, view = view, update = update }
+
+
+view model =
+  div [ class "container m-2" ]
+    [ div [ class "row" ]
+        [ button [ class "btn btn-info mr-2" , onClick Reset ] [ text "X" ]
+        , button [ class "btn btn-warning mr-2" , onClick Decrement ] [ text "-" ]
+        , button [ class "btn btn-success" , onClick Increment ] [ text "+" ]
+        , div [ class "d-block alert alert-info m-2"] [ text (toString model.valeur) ]
+        ]
+    ]
+
+
+-- Union Type : On définit un type contenant les actions possibles
+type Msg = Increment | Decrement | Reset
+
+-- Conformément aux troisième arguments de beginnerProgram c'est la fonction update
+update msg model.valeur =
+  case msg of
+    Increment ->
+      model.valeur + 1
+
+    Decrement ->
+      model.valeur - 1
+
+    Reset ->
+      0
+```
+
+
+## Première application elm - test
 
 Nous allons créer notre premier application et utiliser `elm-package` pou intaller le module html
 
