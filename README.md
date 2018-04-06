@@ -106,7 +106,216 @@ False : Bool
 >
 ```
 
+Remarque: Comme pour tout REPL, vous receverais toujours une valeur de retour, même si vous ne demandez aucun affichage, le format sera `[VALEUR] : [TYPE]`
+
 Avant de finir, pour tester vos codes en ligne, le site [ellie](https://ellie-app.com/new) semble très bien fait et offre une interface plus complete que la partie try de elm.lang
+
+### Quelques bases
+
+#### L'affectation et Records
+
+L'affectation se fait avec le signe égal (=). Pour noter (et non affecter) les valeurs à l'intérieur des records (l'équivalent des objets en javascript) on utilise les deux points.
+
+```
+> a = 5
+5 : number
+> b = "Salut"
+"Salut" : String
+> c = { paradigme = "fonctionnelle", language = "elm" , naissance = 2012 }
+{ paradigme = "fonctionnelle", language = "elm", naissance = 2012 } : { language : String, naissance : number, paradigme : String }
+> c.paradigme
+"fonctionnelle" : String
+>
+```
+
+Vous pouvez faire une liste de records  (voir [doc officielle](http://elm-lang.org/docs/records))
+
+
+```
+> bill = { nom = "Gates", societe = "microsoft" }
+{ nom = "Gates", societe = "microsoft" } : { nom : String, societe : String }
+> steve = { nom = "Jobs", societe = "apple" }
+{ nom = "Jobs", societe = "apple" } : { nom : String, societe : String }
+> larry = { nom = "Page", societe = "google" }
+{ nom = "Page", societe = "google" } : { nom : String, societe : String }
+> people = [ bill, steve, larry ]
+[{ nom = "Gates", societe = "microsoft" },{ nom = "Jobs", societe = "apple" },{ nom = "Page", societe = "google" }] : List { nom : String, societe : String }
+>
+```
+
+#### Accès aux élements d'un record
+
+il y a deux facons:
+
+`record.element`
+
+ou
+
+`.element record`
+
+```
+> bill.nom
+"Gates" : String
+> .nom bill
+"Gates" : String
+>
+```
+
+
+#### Immutabilité
+
+L'immutabilité est un des concepts clé de la programmation fonctionnelle, cela conciste à ne pas permettre le changement d'état mais de créer une sorte de copie. Et donc d'éviter les effets de bords (et donc si un record est utilisé dans une fonction, il ne risque pas d'être modifié en cours de route). L'immutabilité permet d'accéleré 
+Dans ce cas nous ne parlons pas d'immutabilité
+
+```
+> test1 = 1
+1 : number
+> test1 = 2
+2 : number
+>
+```
+
+
+par contre ici si:
+```
+> test1 = test1 + 1
+-- BAD RECURSION --------------------------------------------- repl-temp-000.elm
+
+`test1` is defined directly in terms of itself, causing an infinite loop.
+
+9| test1 = test1 + 1
+   ^^^^^
+Maybe you are trying to mutate a variable? Elm does not have mutation, so when I
+see `test1` defined in terms of `test1`, I treat it as a recursive definition.
+Try giving the new value a new name!
+
+Maybe you DO want a recursive value? To define `test1` we need to know what
+`test1` is, so letÔÇÖs expand it. Wait, but now we need to know what `test1` is,
+so letÔÇÖs expand it... This will keep going infinitely!
+
+To really learn what is going on and how to fix it, check out:
+<https://github.com/elm-lang/elm-compiler/blob/0.18.0/hints/bad-recursion.md>
+
+
+>
+```
+
+Les records sont immutables donc pas question de modifier son contenu directement, il faut créer un nouveau record avec les modifications necessaires via le pipe "|":
+
+```
+> rec = { val1 = 1, val2 = 2 }
+{ val1 = 1, val2 = 2 } : { val1 : number, val2 : number1 }
+> rec.val1 = 3
+-- SYNTAX PROBLEM -------------------------------------------- repl-temp-000.elm
+
+The = operator is reserved for defining variables. Maybe you want == instead? Or
+maybe you are defining a variable, but there is whitespace before it?
+
+7|   rec.val1 = 3
+              ^
+Maybe <http://elm-lang.org/docs/syntax> can help you figure it out.
+
+
+> rec.val1 : 3
+-- SYNTAX PROBLEM -------------------------------------------- repl-temp-000.elm
+
+A single colon is for type annotations. Maybe you want :: instead? Or maybe you
+are defining a type annotation, but there is whitespace before it?
+
+7|   rec.val1 : 3
+              ^
+Maybe <http://elm-lang.org/docs/syntax> can help you figure it out.
+
+
+> { rec | val1 = 3 }
+{ val1 = 3, val2 = 2 } : { val2 : number1, val1 : number }
+> rec
+{ val1 = 1, val2 = 2 } : { val1 : number, val2 : number1 }
+>
+```
+
+Par contre attention a ne pas modifier la structure du record que l'on manipule:
+
+```
+
+> { rec | val1 = "3" }
+{ val1 = "3", val2 = 2 } : { val2 : number, val1 : String }
+> { rec | champInexistant = 3 }
+-- TYPE MISMATCH --------------------------------------------- repl-temp-000.elm
+
+`rec` is being used in an unexpected way.
+
+7|   { rec | champInexistant = 3 }
+       ^^^
+Based on its definition, `rec` has this type:
+
+    { val1 : ..., val2 : ... }
+
+But you are trying to use it as:
+
+    { b | champInexistant : ... }
+
+Hint: The record fields do not match up. One has val1 and val2. The other has
+champInexistant.
+
+
+>
+```
+
+L'ajout et la suppression de champ ont été implémenté dans la version 0.6 du compilateur elm puis jugé inutile puisque le type "union" permet de le faire
+
+#### Les listes
+
+les listes s'initialisent comme suit:
+
+```
+> jours = [ "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche" ]
+["mardi","mercredi","jeudi","vendredi","samedi","dimanche"] : List String
+>
+```
+Pour ajouter un élement il faut utiliser la fonction `List.append` ou simplement l'opérateur `::`
+
+```
+> "lundi" :: jours
+["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"] : List String
+```
+
+#### L'opérateur arithmétique de l'addition
+le REPL peut être utilisé comme une calculatrice comme nous l'avons fait précédemment, la différence avec javascript par exemple, c'est que ELM utilise un typage statique, en gros quand c'est du texte, c'est du texte, et si c'est un nombre, ca restera un nombre, au niveau de javascript il est possible de faire `1 + 1` ou `true + 1` ou encore `"1" + 1`, c'est javascript qui décidera de comment utiliser le signe "+" et donc du resultat et de son type (ici cela fera 2, 2 et "11"). Avec ELM, il n'y a pas d'ambiguité, un plus (+) restera pour l'addition et non la concatenation de chaine de caractère, pour la concaténation on utilisera plûtot + plus (++), le signe ++ s'applique aux "strings", "text" et "lists".
+
+```
+> 1 + 2
+3 : number
+> True + 1
+-- TYPE MISMATCH --------------------------------------------- repl-temp-000.elm
+
+The left argument of (+) is causing a type mismatch.
+
+3|   True + 1
+     ^^^^
+(+) is expecting the left argument to be a:
+
+    number
+
+But the left argument is:
+
+    Bool
+
+
+>
+```
+
+Notez que le compilateur utilise ce qu'on appelle l'inférence de type (type inference) pour dans son message vous dire quel type de valeur doit être fournie à droite de l'opérateur ou à gauche
+
+### Les appendables
+
+Voyons le resultat du double signe sur quelques valeurs, nous rappelons qu'Elm est fortement typé, seul les opérandes de types strings, text ou lists peuvent être utilisées.
+
+#### Les opérateurs de la division
+
+Il y a deux signes de division
+- / qui rend le résultat de la division exacte
+- // qui rend la partie entière (le quotient) de la division euclidienne
 
 
 ## Première application elm
