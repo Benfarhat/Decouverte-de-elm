@@ -8265,13 +8265,46 @@ var _user$project$Application$update = F2(
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'Increment':
-				return model + 1;
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{valeur: model.valeur + 1, bouton: '+'});
 			case 'Decrement':
-				return model - 1;
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{valeur: model.valeur - 1, bouton: '-'});
 			default:
-				return 0;
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{valeur: 0, bouton: 'x'});
 		}
 	});
+var _user$project$Application$myStyle = _elm_lang$html$Html_Attributes$style(
+	{
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'width', _1: '200px'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'height', _1: '40px'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'padding', _1: '10px 0'},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'font-size', _1: '7em'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		}
+	});
+var _user$project$Application$Model = F2(
+	function (a, b) {
+		return {valeur: a, bouton: b};
+	});
+var _user$project$Application$model = A2(_user$project$Application$Model, 0, 'x');
 var _user$project$Application$Reset = {ctor: 'Reset'};
 var _user$project$Application$Decrement = {ctor: 'Decrement'};
 var _user$project$Application$Increment = {ctor: 'Increment'};
@@ -8281,7 +8314,11 @@ var _user$project$Application$view = function (model) {
 		{
 			ctor: '::',
 			_0: _elm_lang$html$Html_Attributes$class('container m-2'),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: _user$project$Application$myStyle,
+				_1: {ctor: '[]'}
+			}
 		},
 		{
 			ctor: '::',
@@ -8298,7 +8335,8 @@ var _user$project$Application$view = function (model) {
 						_elm_lang$html$Html$button,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('btn btn-info mr-2'),
+							_0: _elm_lang$html$Html_Attributes$class(
+								_elm_lang$core$Native_Utils.eq(model.bouton, 'x') ? 'btn btn-info mr-2' : 'btn mr-2'),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(_user$project$Application$Reset),
@@ -8307,7 +8345,7 @@ var _user$project$Application$view = function (model) {
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('X'),
+							_0: _elm_lang$html$Html$text('x'),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
@@ -8316,7 +8354,8 @@ var _user$project$Application$view = function (model) {
 							_elm_lang$html$Html$button,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('btn btn-warning mr-2'),
+								_0: _elm_lang$html$Html_Attributes$class(
+									_elm_lang$core$Native_Utils.eq(model.bouton, '-') ? 'btn btn-warning mr-2' : 'btn mr-2'),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Events$onClick(_user$project$Application$Decrement),
@@ -8334,7 +8373,8 @@ var _user$project$Application$view = function (model) {
 								_elm_lang$html$Html$button,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('btn btn-success'),
+									_0: _elm_lang$html$Html_Attributes$class(
+										_elm_lang$core$Native_Utils.eq(model.bouton, '+') ? 'btn btn-danger mr-2' : 'btn mr-2'),
 									_1: {
 										ctor: '::',
 										_0: _elm_lang$html$Html_Events$onClick(_user$project$Application$Increment),
@@ -8346,31 +8386,42 @@ var _user$project$Application$view = function (model) {
 									_0: _elm_lang$html$Html$text('+'),
 									_1: {ctor: '[]'}
 								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$class('d-block alert alert-info m-2'),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											_elm_lang$core$Basics$toString(model)),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
+							_1: {ctor: '[]'}
 						}
 					}
 				}),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('row'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('d-block alert alert-info m-2'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									_elm_lang$core$Basics$toString(model.valeur)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
 		});
 };
 var _user$project$Application$main = _elm_lang$html$Html$beginnerProgram(
-	{model: 0, view: _user$project$Application$view, update: _user$project$Application$update})();
+	{model: _user$project$Application$model, view: _user$project$Application$view, update: _user$project$Application$update})();
 
 var Elm = {};
 Elm['Application'] = Elm['Application'] || {};
