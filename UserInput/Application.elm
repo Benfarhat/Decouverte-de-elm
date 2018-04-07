@@ -11,8 +11,19 @@ main =
   beginnerProgram { model = { valeur = 0 }, view = view, update = update }
 
 
+-- MODEL
+
+
+type alias Model =
+  { valeur : Int }
+
+
+model : Model
+model =
+  Model 0
+
 view model =
-  div [ class "container m-2" ]
+  div [ class "container m-2", myStyle ]
     [ div [ class "row" ]
         [ button [ class "btn btn-info mr-2" , onClick Reset ] [ text "X" ]
         , button [ class "btn btn-warning mr-2" , onClick Decrement ] [ text "-" ]
@@ -21,18 +32,27 @@ view model =
         ]
     ]
 
-
+myStyle =
+  style
+    [ ("width", "100%")
+    , ("height", "40px")
+    , ("padding", "10px 0")
+    , ("font-size", "2em")
+    , ("text-align", "center")
+    ]
+    
 -- Union Type : On définit un type contenant les actions possibles
 type Msg = Increment | Decrement | Reset
 
 -- Conformément aux troisième arguments de beginnerProgram c'est la fonction update
-update msg model.valeur =
+update : Msg -> Model -> Model
+update msg model =
   case msg of
     Increment ->
-      model.valeur + 1
+      { model | valeur = model.valeur + 1 }
 
     Decrement ->
-      model.valeur - 1
+      { model | valeur = model.valeur - 1 }
 
     Reset ->
-      0
+      { model | valeur = 0 }
