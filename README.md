@@ -37,7 +37,9 @@
     - [Intégrer de l'elm dans une page html](#int%C3%A9grer-de-lelm-dans-une-page-html)
     - [Autres application](#autres-application)
       - [Retour sur la création du programme](#retour-sur-la-cr%C3%A9ation-du-programme)
-    - [Accès distant http](#acc%C3%A8s-distant-http)
+      - [Requêtes HTTP](#requ%C3%AAtes-http)
+- [Implémentation](#impl%C3%A9mentation)
+  - [Les alias de type](#les-alias-de-type)
 
 # Présentation de ELM
 
@@ -1208,4 +1210,86 @@ Il existe également la fonction programWithFlags qui permet d'initialiser votre
 
 Notez que tous les élements HTML sont générer via la fonction node (chaque élément du DOM étant un noeud) du module VirtualDOM
 
-### Accès distant http
+#### Requêtes HTTP 
+
+Pour faire des requêtes il faut d'abord avoir l'URL d'un serveur qui vous répondra, choisissons pas exemple Random User: 
+En accédant a cette [adresse](https://randomuser.me/api/) vous récupérer des données au format JSON d'un utilisateur au hasard, pour récupérer les données de X utilisateurs il vous suffit de rajouter le paramètres results:
+https://randomuser.me/api/?results=X
+
+Concrètement il faut utiliser le modules HTTP (elm-lang/http) pour la gestion des requêtes et éventuellement HTTP.Progress pour suivre l'évolution de la réponse.
+
+Lancons nous dans notre application SPA
+
+# Implémentation
+
+## Les alias de type
+
+En regadant le résultat de `https://randomuser.me/api/?results=6` on peut en déduire les types suivants: 
+
+```
+-- Type Alias
+
+type alias Name =
+    { title	: String
+    , first	: String
+    , last	: String
+    }
+   
+type alias Login =
+    { username	: String
+    , password	: String
+    , salt	: String
+    , md5	: String
+    , sha1	: String
+    }
+    
+type alias Id =
+    { name	: String
+    , value	: String
+    }
+    
+type alias Location =
+    { street	: String
+    , city	: String
+    , state	: String
+    , postcode : Int
+    }
+    
+type alias Picture =
+    { large	: String
+    , medium	: String
+    , thumbnail	: String
+    }
+    
+type alis Info = 
+    { seed  : String
+    , results  : Int
+    , page  : Int
+    , version : String
+    }
+    
+type alias User =
+    { gender	: String
+    , name	: Name
+    , location	: Location
+    , email : String
+    , login	: Login
+    , dob	: String
+    , register : String
+    , phone	: String
+    , cell	: String
+    , id : Id
+    , picture : Picture
+    , cell : String
+    }
+
+type alias Model =
+    { query : String
+    , results : List User
+    , info : Info
+    , error : Maybe String
+    }
+```
+
+
+
