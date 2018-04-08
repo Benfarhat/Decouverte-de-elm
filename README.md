@@ -188,6 +188,8 @@ But the left argument is:
 
 Notez que le compilateur utilise ce qu'on appelle l'inférence de type (type inference) pour dans son message vous dire quel type de valeur doit être fournie à droite de l'opérateur ou à gauche
 
+L'inférence de type donne donc le type de vos arguments, variables et fonctions mais cela ne veut pas dire qu'il vous est permis comme en javascript de changer dynamiquement de type, celui est statique
+
 ### Prefixe style et infixe stle
 
 Dans toutes les opérations vous pouvez théoriquement prendre pour équivalent l'utilisation de l'opérateur entre les opérandes ou en début de ligne
@@ -1261,13 +1263,6 @@ type alias Picture =
     , thumbnail	: String
     }
     
-type alis Info = 
-    { seed  : String
-    , results  : Int
-    , page  : Int
-    , version : String
-    }
-    
 type alias User =
     { gender	: String
     , name	: Name
@@ -1281,6 +1276,13 @@ type alias User =
     , id : Id
     , picture : Picture
     , cell : String
+    }
+
+type alias Info = 
+    { seed  : String
+    , results  : Int
+    , page  : Int
+    , version : String
     }
 
 type alias Model =
